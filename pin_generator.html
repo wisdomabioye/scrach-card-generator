@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PIN and Serial Generator</title>
+	<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+	<style type="text/css">
+		html {
+			/*height: 0;*/
+		}
+		body{
+			font-family: cursive !important;
+		}
+		.wrapper{
+			border: 1px solid grey;
+			padding: 5px 2px 0;
+			/*margin: 2px 0;*/
+			margin-bottom: 10px;
+			/*height: 210px !important;*/
+		}
+		/*.wrapper:nth-child(10n+0),.wrapper:nth-child(9n+0){
+			margin-bottom: 15px !important;
+		}*/
+		.instruction{
+			font-size: 12px;
+			border-right:2px dashed black;
+
+		}
+		.pin{
+			font-size: 14px;
+		}
+		.footer p{
+			margin:0;
+			font-size:12px;
+		}
+		.page-break	{ 
+			/*page-break-before: always;*/
+			page-break-inside:avoid !important; 
+			page-break-after:auto !important;
+		}
+		@media print{
+			.page-break	{ 
+				/*page-break-before: always;*/
+				page-break-inside:avoid !important; 
+				page-break-after:auto !important;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="row" id="main">
+	</div>
+	<div class="raw"></div>
+<script type="text/javascript">
+	//var pinStart = 11324354; serial = 10102;//first badge 480
+	//var pinStart = 11451454; serial = 17103;//second badge 250
+
+//card settings
+
+	// var pinStart = 100451454; //second badge
+	var serialPrefix = "LSC";
+	// var start = 10903; // start number
+	var serialStart = 12653; // serial number to begin
+	var term = 3;
+	var year = 2019;
+	var now = new Date().getTime();
+	var pinAndSerialObject = []; //card pin & serial object
+	var numberOfCardToProduce = 101 //this will produce 100 cards
+	/*
+	for(var i = start; i <= start+(numberOfCardToProduce*7); i+=7){
+		pinAndSerialObject.push({"serial":serialPrefix+(serial+=7),"pin":(pinStart+=127).toString()});
+	}*/
+	for (let i = 1; i <= numberOfCardToProduce; i++) {
+		pinAndSerialObject.push({
+			"serial": serialPrefix+serialStart++,
+			"pin": Math.round(now / (i + (numberOfCardToProduce - term)))
+		})
+	}
+	// console.log(pinAndSerialObject.length)
+//print json on web page
+	document.querySelector("div.raw").innerHTML = JSON.stringify(pinAndSerialObject); 
+
+//write on the console
+
+	// console.log(pinAndSerialObject, pinAndSerialObject.length)
+
+//print pretty version on the webpage
+	for(var l = 0; l < pinAndSerialObject.length; l++){
+		append(pinAndSerialObject[l].pin, pinAndSerialObject[l].serial);
+	}
+
+	function append(pin,serial){
+		var wrapper = '<div class="col-sm-12 header"><div class="row"><div class="col-sm-1"><img src="hillcrest_logo.png" width="50"></div><div class="col-sm-11"><h6 class="text-center">HILL CREST INTERNATIONAL SCHOOLS, MINNA</h6><p class="text-center text-danger">Result Checking Card</p></div></div></div><div class="col-sm-12 content"><div class="row"><div class="col-sm-7 instruction"><u class="text-center">How to use this card</u><br/><span>Visit <i>www.hillcrestschools.org</i></span><br/><span>Login with your Student Id and Password.</span><br/><span>Click on Result and input this card PIN &amp; Serial.</span><br/><span>Print your result.</span></div><div class="col-sm-5 pin"><p>Serial No.: '+serial+'</p><p>PIN: '+pin+'</p></div></div><div class="col-sm-12 footer text-center bg-info"><p>Lovelamp Systems &amp; Consulting Firm.</p></div></div>';
+		var col = document.createElement("div");
+			// console.log(col)
+			col.classList.add("col-sm-6");
+			col.classList.add("wrapper");
+			// col.classList.add("page-break");
+			col.innerHTML = wrapper;
+		
+		var row = document.getElementById("main");
+			row.classList.add("page-break");
+			row.appendChild(col);
+	}
+</script>
+</body>
+</html>
